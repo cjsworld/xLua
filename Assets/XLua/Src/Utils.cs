@@ -516,8 +516,8 @@ namespace XLua
                 }
 
                 PropertyInfo prop = null;
-                if (method_name.StartsWith("add_") || method_name.StartsWith("remove_")
-                    || method_name == "get_Item" || method_name == "set_Item")
+                if (method_name.StartsWith("add_") || method_name.StartsWith("remove_"))
+                    //|| method_name == "get_Item" || method_name == "set_Item") // by cjs
                 {
                     continue;
                 }
@@ -551,15 +551,15 @@ namespace XLua
                 {
                     continue;
                 }
-                else
-                {
+                //else  //by cjs
+                //{
                     if (overloads == null)
                     {
                         overloads = new List<MemberInfo>();
                         pending_methods.Add(method_key, overloads);
                     }
                     overloads.Add(method);
-                }
+                //}
             }
 
             foreach (var kv in pending_methods)
@@ -805,7 +805,12 @@ namespace XLua
             LuaAPI.lua_pop(L, 8);
 
             System.Diagnostics.Debug.Assert(top_enter == LuaAPI.lua_gettop(L));
-        }
+
+			// by cjs
+	        if (LuaHotfixConfig.IsNeedPrivate(type)) {
+		        MakePrivateAccessible(L, type);
+	        }
+		}
 
         //meta: -4, method:-3, getter: -2, setter: -1
         public static void BeginObjectRegister(Type type, RealStatePtr L, ObjectTranslator translator, int meta_count, int method_count, int getter_count,

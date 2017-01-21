@@ -263,7 +263,7 @@ namespace XLua
 
         [DidReloadScripts]
         [PostProcessScene]
-        //[UnityEditor.MenuItem("XLua/Hotfix Inject In Editor", false, 3)]
+        [UnityEditor.MenuItem("XLua/Hotfix Inject In Editor", false, 3)]
         public static void HotfixInject()
         {
             AssemblyDefinition assembly = null;

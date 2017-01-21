@@ -159,7 +159,7 @@ namespace XLua
 #endif
         }
 
-        [Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")]
+        //[Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")] // by cjs
         public object this[string field]
         {
             get
@@ -172,7 +172,7 @@ namespace XLua
             }
         }
 
-        [Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")]
+        //[Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")] // by cjs
         public object this[object field]
         {
             get
@@ -185,7 +185,7 @@ namespace XLua
             }
         }
 
-		[Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")]
+		//[Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")] // by cjs
 		public object this[int field] {
 			get {
 				return Get<int, object>(field);

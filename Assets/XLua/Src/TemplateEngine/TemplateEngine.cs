@@ -183,15 +183,15 @@ namespace TemplateEngine
         public static string Execute(LuaFunction compiledTemplate, LuaTable parameters)
         {
             compiledTemplate.SetEnv(parameters);
-            object[] result = compiledTemplate.Call();
+            object[] result = compiledTemplate._Call(); //by cjs
             System.Diagnostics.Debug.Assert(result.Length == 1);
             return result[0].ToString();
         }
 
         public static string Execute(LuaFunction compiledTemplate)
         {
-            object[] result = compiledTemplate.Call();
-            System.Diagnostics.Debug.Assert(result.Length == 1);
+            object[] result = compiledTemplate._Call(); //by cjs
+			System.Diagnostics.Debug.Assert(result.Length == 1);
             return result[0].ToString();
         }
 

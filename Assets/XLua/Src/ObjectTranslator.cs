@@ -1176,7 +1176,8 @@ namespace XLua
                     {typeof(ushort),  new Action<RealStatePtr, ushort>((L, v) => LuaAPI.xlua_pushinteger(L, v)) },
                     {typeof(uint),  new Action<RealStatePtr, uint>(LuaAPI.xlua_pushuint) },
                     {typeof(float),  new Action<RealStatePtr, float>((L, v) => LuaAPI.lua_pushnumber(L, v)) },
-                };
+					{typeof(LuaCSFunction),  new Action<RealStatePtr, LuaCSFunction>((L, v) => LuaAPI.lua_pushstdcallcfunction(L, v)) },
+				};
             }
 
             Delegate obj;
@@ -1220,7 +1221,7 @@ namespace XLua
                     {typeof(ushort), new Func<RealStatePtr, int, ushort>((L, idx) => (ushort)LuaAPI.xlua_tointeger(L, idx) ) },
                     {typeof(uint), new Func<RealStatePtr, int, uint>(LuaAPI.xlua_touint) },
                     {typeof(float), new Func<RealStatePtr, int, float>((L, idx) => (float)LuaAPI.lua_tonumber(L, idx) ) },
-                };
+				};
             }
 
             Delegate obj;
