@@ -184,8 +184,8 @@ namespace XLua
                 Set(field, value);
             }
         }
-
-		//[Obsolete("use no boxing version: GetInPath/SetInPath Get/Set instead!")] // by cjs
+		
+		 // by cjs
 		public object this[int field] {
 			get {
 				return Get<int, object>(field);
@@ -194,6 +194,58 @@ namespace XLua
 				Set(field, value);
 			}
 		}
+
+        public void ForEach<TKey, TValue>(Action<TKey, TValue> action)
+        {
+#if THREAD_SAFT || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                var L = luaEnv.L;
+                var translator = luaEnv.translator;
+                int oldTop = LuaAPI.lua_gettop(L);
+                try
+                {
+                    LuaAPI.lua_getref(L, luaReference);
+                    LuaAPI.lua_pushnil(L);
+                    while (LuaAPI.lua_next(L, -2) != 0)
+                    {
+                        TKey key;
+                        TValue val;
+                        translator.Get(L, -2, out key);
+                        translator.Get(L, -1, out val);
+                        action(key, val);
+                        LuaAPI.lua_pop(L, 1);
+                    }
+                }
+                finally
+                {
+                    LuaAPI.lua_settop(L, oldTop);
+                }
+#if THREAD_SAFT || HOTFIX_ENABLE
+            }
+#endif
+        }
+
+        public int Length
+        {
+            get
+            {
+#if THREAD_SAFT || HOTFIX_ENABLE
+                lock (luaEnv.luaEnvLock)
+                {
+#endif
+                    var L = luaEnv.L;
+                    int oldTop = LuaAPI.lua_gettop(L);
+                    LuaAPI.lua_getref(L, luaReference);
+                    var len = (int)LuaAPI.xlua_objlen(L, -1);
+                    LuaAPI.lua_settop(L, oldTop);
+                    return len;
+#if THREAD_SAFT || HOTFIX_ENABLE
+                }
+#endif
+            }
+        }
 
 #if THREAD_SAFT || HOTFIX_ENABLE
         [Obsolete("not thread saft!", true)]
@@ -298,5 +350,5 @@ namespace XLua
         {
             return "table :" + luaReference;
         }
-	}
+    }
 }

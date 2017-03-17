@@ -33,6 +33,10 @@ LUA_API int xlua_get_registry_index() {
 	return LUA_REGISTRYINDEX;
 }
 
+LUA_API int xlua_get_lib_version() {
+	return 100;
+}
+
 LUA_API int xlua_tocsobj_safe(lua_State *L,int index) {
 	int *udata = (int *)lua_touserdata (L,index);
 	if (udata != NULL) {
@@ -302,9 +306,11 @@ static int c_lua_setglobal(lua_State* L) {
 }
 
 LUA_API int xlua_setglobal (lua_State *L, const char *name) {
+	int top = lua_gettop(L);
 	lua_pushcfunction(L, c_lua_setglobal);
 	lua_pushstring(L, name);
-	lua_pushvalue(L, -3);
+	lua_pushvalue(L, top);
+	lua_remove(L, top);
 	return lua_pcall(L, 2, 0, 0);
 }
 
@@ -500,7 +506,7 @@ LUA_API int obj_newindexer(lua_State *L) {
 		lua_call(L, 3, 0);
 		return 0;
 	} else {
-		return luaL_error(L, "cannot set %s, no suck field", lua_tostring(L, 2));
+		return luaL_error(L, "cannot set %s, no such field", lua_tostring(L, 2));
 	}
 }
 
@@ -1154,11 +1160,12 @@ LUA_API int gen_css_access(lua_State *L) {
 
 LUA_API int css_clone(lua_State *L) {
 	CSharpStruct *from = (CSharpStruct *)lua_touserdata(L, 1);
+	CSharpStruct *to = NULL;
 	if (!is_cs_data(L, 1) || from->fake_id != -1) {
 		return luaL_error(L, "invalid c# struct!");
 	}
 	
-	CSharpStruct *to = (CSharpStruct *)lua_newuserdata(L, from->len + sizeof(int) + sizeof(unsigned int));
+	to = (CSharpStruct *)lua_newuserdata(L, from->len + sizeof(int) + sizeof(unsigned int));
 	to->fake_id = -1;
 	to->len = from->len;
 	memcpy(&(to->data[0]), &(from->data[0]), from->len);
